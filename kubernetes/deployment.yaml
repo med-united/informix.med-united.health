@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: informix-db
+spec:
+  serviceName: informix-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: informix
+  template:
+    metadata:
+      labels:
+        app: informix
+    spec:
+      containers:
+        - name: informix
+          image: icr.io/informix/informix-developer-database 
+          imagePullPolicy: Always
+          env:
+            - name: LICENSE
+              value: accept
+            # Add other environment variables as needed for configuration
+          ports:
+            - containerPort: 1526
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: informix-service
+spec:
+  selector:
+    app: informix
+  ports:
+    - port: 1526
+      targetPort: 1526
